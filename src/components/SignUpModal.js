@@ -18,6 +18,10 @@ const SignUpModal = () => {
             setValidation("6 characters min")
             return;
         }
+        else if (inputs.current[1].value !== inputs.current[2].value) {
+            setValidation("Passwords do not match")
+            return;
+        }
     }
     return (
         <>
