@@ -2,7 +2,11 @@ import React, { useContext, useRef, useState } from 'react';
 import { UserContext } from '../context/userContext';
 
 const SignUpModal = () => {
-    const { modalState, toggleModals } = useContext(UserContext);
+
+    const { modalState, toggleModals, signUp } = useContext(UserContext);
+
+    console.log(signUp);
+
     const [validation, setValidation] = useState("");
     const inputs = useRef([]);
     const addInputs = el => {
@@ -11,7 +15,9 @@ const SignUpModal = () => {
         }
     }
 
-    const handleForm = e => {
+    const formRef = useRef();
+
+    const handleForm = async (e) => {
         e.preventDefault()
         console.log(inputs);
         if ((inputs.current[1].value.length || inputs.current[2].value.length) < 6) {
@@ -22,13 +28,38 @@ const SignUpModal = () => {
             setValidation("Passwords do not match")
             return;
         }
+
+        try {
+            const cred = await signUp(
+                inputs.current[0].value,
+                inputs.current[1].value
+            )
+            formRef.current.reset();
+            setValidation("")
+            console.log(cred);
+
+        } catch (err) {
+            console.dir(err);
+            if (err.code === "auth/invalid-email") {
+                setValidation("Email format invalid")
+            }
+            if (err.code === "auth/email-already-in-use") {
+                setValidation("Email already used")
+            }
+        }
     }
+
+    const closeModal = () => {
+        setValidation("");
+        toggleModals("close");
+    }
+
     return (
         <>
             {modalState.signUpModal && (
                 <div className="position-fixed top-0 vw-100 vh-100">
                     <div
-                        onClick={() => toggleModals("close")}
+                        onClick={closeModal}
                         className="w-100 h-100 bg-dark bg-opacity-75">
                     </div>
                     <div className="position-absolute top-50 start-50 translate-middle bg-white" style={{
@@ -42,11 +73,12 @@ const SignUpModal = () => {
                                         marginBottom: "16px"
                                     }}>Sign Up</h5>
                                     <button
-                                        onClick={() => toggleModals("close")}
+                                        onClick={closeModal}
                                         className="btn-close"></button>
                                 </div>
                                 <div className="modal-body">
                                     <form
+                                        ref={formRef}
                                         onSubmit={handleForm}
                                         className="sign-up-form">
                                         <div className="mb-3">

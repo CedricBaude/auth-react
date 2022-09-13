@@ -10,6 +10,10 @@ export const UserContext = createContext()
 
 export function UserContextProvider(props) {
 
+    const [currentUser, setCurrentUser] = useState();
+    const [loadingData, setLoadingData] = useState(true);
+
+    const signUp = (email, pwd) => createUserWithEmailAndPassword(auth, email, pwd);
 
     //modal
     const [modalState, setModalState] = useState({
@@ -38,7 +42,7 @@ export function UserContextProvider(props) {
         }
     }
     return (
-        <UserContext.Provider value={{ modalState, toggleModals }}>
+        <UserContext.Provider value={{ modalState, toggleModals, signUp }}>
             {props.children}
         </UserContext.Provider>
     )
