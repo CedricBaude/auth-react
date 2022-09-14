@@ -23,6 +23,7 @@ export function UserContextProvider(props) {
     }, [])
 
     const signUp = (email, pwd) => createUserWithEmailAndPassword(auth, email, pwd);
+    const signIn = (email, pwd) => signInWithEmailAndPassword(auth, email, pwd);
 
     //modal
     const [modalState, setModalState] = useState({
@@ -51,7 +52,7 @@ export function UserContextProvider(props) {
         }
     }
     return (
-        <UserContext.Provider value={{ modalState, toggleModals, signUp, currentUser }}>
+        <UserContext.Provider value={{ modalState, toggleModals, signUp, currentUser, signIn }}>
             {!loadingData && props.children}
         </UserContext.Provider>
     )
